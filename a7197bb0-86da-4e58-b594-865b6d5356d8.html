@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 24.8.1.2 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="00:00:00"/>
+	<style type="text/css">
+		@page { size: 8.27in 11.69in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent }
+		pre { background: transparent }
+		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		pre.cjk { font-family: "NSimSun", monospace; font-size: 10pt }
+		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre class="western">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot; /&gt;
+  &lt;title&gt;<font face="NSimSun, monospace"><span lang="zh-CN">草野球オーダー作成（スマホ対応版）</span></font>&lt;/title&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;
+      margin: 10px;
+      line-height: 1.5;
+      background: #fafafa;
+    }
+    h1, h2 {
+      margin: 6px 0;
+    }
+    .small {
+      font-size: 12px;
+      color: #666;
+    }
+    .section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    label {
+      font-size: 13px;
+      display: block;
+      margin-top: 4px;
+    }
+    input, select, button {
+      font-size: 14px;
+      padding: 6px 8px;
+      margin-top: 2px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    input, select {
+      width: 100%;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      background: #1976d2;
+      color: #fff;
+      margin-right: 4px;
+      margin-top: 6px;
+    }
+    button.secondary {
+      background: #999;
+    }
+    button.danger {
+      background: #d32f2f;
+    }
+    button.outline {
+      background: #fff;
+      border: 1px solid #1976d2;
+      color: #1976d2;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .player-list {
+      max-height: 220px;
+      overflow-y: auto;
+      margin-top: 6px;
+    }
+    .player-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 6px;
+      margin-bottom: 6px;
+      font-size: 13px;
+      background: #fcfcfc;
+    }
+    .player-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+    .pill {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #eee;
+      margin-right: 2px;
+      display: inline-block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 4px;
+      text-align: center;
+      word-break: break-all;
+    }
+    th {
+      background: #f3f3f3;
+    }
+    .lineup-row-selected {
+      background: #e3f2fd;
+    }
+    .tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #e0f2f1;
+      margin-left: 4px;
+    }
+    #validationMessages {
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    .msg-ok {
+      color: #2e7d32;
+    }
+    .msg-warn {
+      color: #d32f2f;
+    }
+
+    @media (min-width: 900px) {
+      .layout {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 10px;
+      }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;<font face="NSimSun, monospace"><span lang="zh-CN">草野球オーダー作成</span></font>&lt;/h1&gt;
+  &lt;p class=&quot;small&quot;&gt;
+    <font face="NSimSun, monospace"><span lang="zh-CN">スマホ向け簡易ツール：選手データベース → ポジション検索 → オーダー作成。</span></font>&lt;br&gt;
+    <font face="NSimSun, monospace"><span lang="zh-CN">データは端末内（ブラウザの保存領域）に自動保存されます。初回はサンプル選手</span></font>10<font face="NSimSun, monospace"><span lang="zh-CN">人が登録されています。</span></font>
+  &lt;/p&gt;
+
+  &lt;div class=&quot;layout&quot;&gt;
+    &lt;!-- <font face="NSimSun, monospace"><span lang="zh-CN">左側：選手</span></font>DB &amp; <font face="NSimSun, monospace"><span lang="zh-CN">検索 </span></font>--&gt;
+    &lt;div&gt;
+      &lt;!-- <font face="NSimSun, monospace"><span lang="zh-CN">選手登録 </span></font>--&gt;
+      &lt;div class=&quot;section&quot;&gt;
+        &lt;h2&gt;1. <font face="NSimSun, monospace"><span lang="zh-CN">選手データ登録</span></font>&lt;/h2&gt;
+        &lt;p class=&quot;small&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">名前・背番号・第</span></font>1<font face="NSimSun, monospace"><span lang="zh-CN">〜第</span></font>4<font face="NSimSun, monospace"><span lang="zh-CN">候補</span></font>/<font face="NSimSun, monospace"><span lang="zh-CN">希望ポジションを登録します。</span></font>&lt;/p&gt;
+        &lt;label&gt;
+          <font face="NSimSun, monospace"><span lang="zh-CN">選手名</span></font>
+          &lt;input type=&quot;text&quot; id=&quot;playerName&quot; placeholder=&quot;<font face="NSimSun, monospace"><span lang="zh-CN">例）山田 太郎</span></font>&quot; /&gt;
+        &lt;/label&gt;
+        &lt;label&gt;
+          <font face="NSimSun, monospace"><span lang="zh-CN">背番号</span></font>
+          &lt;input type=&quot;number&quot; id=&quot;playerNumber&quot; placeholder=&quot;10&quot; /&gt;
+        &lt;/label&gt;
+
+        &lt;div style=&quot;margin-top:4px;&quot;&gt;
+          &lt;span class=&quot;small&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">可能ポジション（守れるポジ：第</span></font>1<font face="NSimSun, monospace"><span lang="zh-CN">〜第</span></font>4<font face="NSimSun, monospace"><span lang="zh-CN">）</span></font>&lt;/span&gt;
+          &lt;div id=&quot;possiblePositionsInputs&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div style=&quot;margin-top:4px;&quot;&gt;
+          &lt;span class=&quot;small&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">希望ポジション（やりたいポジ：第</span></font>1<font face="NSimSun, monospace"><span lang="zh-CN">〜第</span></font>4<font face="NSimSun, monospace"><span lang="zh-CN">）</span></font>&lt;/span&gt;
+          &lt;div id=&quot;desiredPositionsInputs&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;btn-row&quot;&gt;
+          &lt;button id=&quot;addPlayerBtn&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">選手を追加</span></font>&lt;/button&gt;
+          &lt;button id=&quot;clearPlayersBtn&quot; class=&quot;danger&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">選手データ全削除</span></font>&lt;/button&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;player-list&quot; id=&quot;playerList&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- <font face="NSimSun, monospace"><span lang="zh-CN">検索 </span></font>--&gt;
+      &lt;div class=&quot;section&quot;&gt;
+        &lt;h2&gt;2. <font face="NSimSun, monospace"><span lang="zh-CN">ポジション検索 → 打順へセット</span></font>&lt;/h2&gt;
+        &lt;p class=&quot;small&quot;&gt;
+          <font face="NSimSun, monospace"><span lang="zh-CN">先に右側の「</span></font>3. <font face="NSimSun, monospace"><span lang="zh-CN">オーダー編集」で打順を選択してから、</span></font>&lt;br&gt;
+          <font face="NSimSun, monospace"><span lang="zh-CN">ここでポジションを選んで選手をセットしていきます。</span></font>
+        &lt;/p&gt;
+        &lt;label&gt;
+          <font face="NSimSun, monospace"><span lang="zh-CN">絞り込みポジション</span></font>
+          &lt;select id=&quot;searchPositionSelect&quot;&gt;&lt;/select&gt;
+        &lt;/label&gt;
+        &lt;div class=&quot;btn-row&quot;&gt;
+          &lt;button id=&quot;searchBtn&quot; class=&quot;outline&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">検索</span></font>&lt;/button&gt;
+          &lt;button id=&quot;resetSearchBtn&quot; class=&quot;secondary&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">検索条件リセット</span></font>&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;player-list&quot; id=&quot;searchResultList&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- <font face="NSimSun, monospace"><span lang="zh-CN">右側：オーダー </span></font>--&gt;
+    &lt;div&gt;
+      &lt;div class=&quot;section&quot;&gt;
+        &lt;h2&gt;3. <font face="NSimSun, monospace"><span lang="zh-CN">オーダー編集</span></font>&lt;/h2&gt;
+        &lt;p class=&quot;small&quot;&gt;
+          <font face="NSimSun, monospace"><span lang="zh-CN">打順行の「選択」ボタンで編集中の打順を決めてから、左の検索結果から選手をセットします。</span></font>&lt;br&gt;
+          <font face="NSimSun, monospace"><span lang="zh-CN">守備位置はここでも直接変更できます。</span></font>
+        &lt;/p&gt;
+
+        &lt;label&gt;
+          DH<font face="NSimSun, monospace"><span lang="zh-CN">使用</span></font>
+          &lt;select id=&quot;dhModeSelect&quot;&gt;
+            &lt;option value=&quot;without&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">なし（</span></font>DH<font face="NSimSun, monospace"><span lang="zh-CN">なし）</span></font>&lt;/option&gt;
+            &lt;option value=&quot;with&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">あり（</span></font>DH<font face="NSimSun, monospace"><span lang="zh-CN">必須）</span></font>&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/label&gt;
+
+        &lt;table&gt;
+          &lt;thead&gt;
+            &lt;tr&gt;
+              &lt;th&gt;<font face="NSimSun, monospace"><span lang="zh-CN">打順</span></font>&lt;/th&gt;
+              &lt;th&gt;<font face="NSimSun, monospace"><span lang="zh-CN">守備位置</span></font>&lt;/th&gt;
+              &lt;th&gt;<font face="NSimSun, monospace"><span lang="zh-CN">選手</span></font>&lt;/th&gt;
+              &lt;th&gt;<font face="NSimSun, monospace"><span lang="zh-CN">操作</span></font>&lt;/th&gt;
+            &lt;/tr&gt;
+          &lt;/thead&gt;
+          &lt;tbody id=&quot;lineupTableBody&quot;&gt;&lt;/tbody&gt;
+        &lt;/table&gt;
+
+        &lt;div class=&quot;btn-row&quot;&gt;
+          &lt;button id=&quot;checkBtn&quot; class=&quot;outline&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">オーダーチェック</span></font>&lt;/button&gt;
+          &lt;button id=&quot;clearLineupPlayersBtn&quot; class=&quot;secondary&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">選手だけ全リセット</span></font>&lt;/button&gt;
+          &lt;button id=&quot;clearLineupBtn&quot; class=&quot;secondary&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">オーダー完全リセット</span></font>&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div id=&quot;validationMessages&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;section&quot;&gt;
+        &lt;h2&gt;4. <font face="NSimSun, monospace"><span lang="zh-CN">オーダー表（確認用）</span></font>&lt;/h2&gt;
+        &lt;p class=&quot;small&quot;&gt;<font face="NSimSun, monospace"><span lang="zh-CN">印刷する場合はブラウザの印刷機能（</span></font>Ctrl+P / Cmd+P<font face="NSimSun, monospace"><span lang="zh-CN">）を利用してください。</span></font>&lt;/p&gt;
+        &lt;table&gt;
+          &lt;thead&gt;
+            &lt;tr&gt;
+              &lt;th&gt;<font face="NSimSun, monospace"><span lang="zh-CN">打順</span></font>&lt;/th&gt;
+              &lt;th&gt;<font face="NSimSun, monospace"><span lang="zh-CN">背番号</span></font>&lt;/th&gt;
+              &lt;th&gt;<font face="NSimSun, monospace"><span lang="zh-CN">選手名</span></font>&lt;/th&gt;
+              &lt;th&gt;<font face="NSimSun, monospace"><span lang="zh-CN">守備位置</span></font>&lt;/th&gt;
+            &lt;/tr&gt;
+          &lt;/thead&gt;
+          &lt;tbody id=&quot;previewTableBody&quot;&gt;&lt;/tbody&gt;
+        &lt;/table&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">定数 </span></font>----
+    const STORAGE_KEY_PLAYERS = &quot;sandlot_players_v2&quot;;
+    const STORAGE_KEY_LINEUP  = &quot;sandlot_lineup_v2&quot;;
+
+    const POSITIONS = [
+      { value: &quot;&quot;,  label: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">（未選択）</span></font>&quot; },
+      { value: &quot;P&quot;, label: &quot;P <font face="NSimSun, monospace"><span lang="zh-CN">投手</span></font>&quot; },
+      { value: &quot;C&quot;, label: &quot;C <font face="NSimSun, monospace"><span lang="zh-CN">捕手</span></font>&quot; },
+      { value: &quot;1B&quot;, label: &quot;1B <font face="NSimSun, monospace"><span lang="zh-CN">一塁</span></font>&quot; },
+      { value: &quot;2B&quot;, label: &quot;2B <font face="NSimSun, monospace"><span lang="zh-CN">二塁</span></font>&quot; },
+      { value: &quot;3B&quot;, label: &quot;3B <font face="NSimSun, monospace"><span lang="zh-CN">三塁</span></font>&quot; },
+      { value: &quot;SS&quot;, label: &quot;SS <font face="NSimSun, monospace"><span lang="zh-CN">遊撃</span></font>&quot; },
+      { value: &quot;LF&quot;, label: &quot;LF <font face="NSimSun, monospace"><span lang="zh-CN">左翼</span></font>&quot; },
+      { value: &quot;CF&quot;, label: &quot;CF <font face="NSimSun, monospace"><span lang="zh-CN">中堅</span></font>&quot; },
+      { value: &quot;RF&quot;, label: &quot;RF <font face="NSimSun, monospace"><span lang="zh-CN">右翼</span></font>&quot; },
+      { value: &quot;DH&quot;, label: &quot;DH <font face="NSimSun, monospace"><span lang="zh-CN">指名打者</span></font>&quot; }
+    ];
+
+    // DH<font face="NSimSun, monospace"><span lang="zh-CN">なしのときに必須とするポジション</span></font>
+    const REQUIRED_FIELD_POS_BASE = [&quot;P&quot;,&quot;C&quot;,&quot;1B&quot;,&quot;2B&quot;,&quot;3B&quot;,&quot;SS&quot;,&quot;LF&quot;,&quot;CF&quot;,&quot;RF&quot;];
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">状態 </span></font>----
+    let players = [];  // {id, name, number, possible[4], desired[4]}
+    let lineup  = [];  // lineup[0..8] = {playerId, pos}
+    let selectedLineupIndex = 0; // <font face="NSimSun, monospace"><span lang="zh-CN">現在編集中の打順</span></font>(0=1<font face="NSimSun, monospace"><span lang="zh-CN">番</span></font>)
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">ユーティリティ </span></font>----
+    function generateId() {
+      return &quot;p_&quot; + Math.random().toString(36).slice(2);
+    }
+
+    function createSamplePlayers() {
+      // <font face="NSimSun, monospace"><span lang="zh-CN">サンプル</span></font>10<font face="NSimSun, monospace"><span lang="zh-CN">人（ざっくり全部ポジ埋まるように）</span></font>
+      return [
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">山田 太郎</span></font>&quot;,
+          number: &quot;10&quot;,
+          possible: [&quot;SS&quot;,&quot;2B&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;SS&quot;,&quot;2B&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">佐藤 次郎</span></font>&quot;,
+          number: &quot;1&quot;,
+          possible: [&quot;P&quot;,&quot;RF&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;P&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">鈴木 三郎</span></font>&quot;,
+          number: &quot;2&quot;,
+          possible: [&quot;C&quot;,&quot;1B&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;C&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">高橋 四郎</span></font>&quot;,
+          number: &quot;3&quot;,
+          possible: [&quot;1B&quot;,&quot;3B&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;1B&quot;,&quot;3B&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">田中 五郎</span></font>&quot;,
+          number: &quot;4&quot;,
+          possible: [&quot;2B&quot;,&quot;SS&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;2B&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">伊藤 六郎</span></font>&quot;,
+          number: &quot;5&quot;,
+          possible: [&quot;3B&quot;,&quot;1B&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;3B&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">渡辺 七海</span></font>&quot;,
+          number: &quot;7&quot;,
+          possible: [&quot;LF&quot;,&quot;CF&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;CF&quot;,&quot;LF&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">中村 八郎</span></font>&quot;,
+          number: &quot;8&quot;,
+          possible: [&quot;CF&quot;,&quot;RF&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;CF&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">小林 九郎</span></font>&quot;,
+          number: &quot;9&quot;,
+          possible: [&quot;RF&quot;,&quot;LF&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;RF&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]
+        },
+        {
+          id: generateId(),
+          name: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">大野 </span></font>DH<font face="NSimSun, monospace"><span lang="zh-CN">男</span></font>&quot;,
+          number: &quot;99&quot;,
+          possible: [&quot;DH&quot;,&quot;1B&quot;,&quot;&quot;,&quot;&quot;],
+          desired:  [&quot;DH&quot;,&quot;&quot;,&quot;&quot;,&quot;&quot;]
+        }
+      ];
+    }
+
+    function loadState() {
+      try {
+        const p = localStorage.getItem(STORAGE_KEY_PLAYERS);
+        const l = localStorage.getItem(STORAGE_KEY_LINEUP);
+        if (p) players = JSON.parse(p);
+        if (l) lineup = JSON.parse(l);
+      } catch (e) {
+        console.error(&quot;load error:&quot;, e);
+      }
+      // <font face="NSimSun, monospace"><span lang="zh-CN">初期オーダー</span></font>
+      if (!Array.isArray(lineup) || lineup.length !== 9) {
+        lineup = Array.from({ length: 9 }, () =&gt; ({ playerId: &quot;&quot;, pos: &quot;&quot; }));
+      }
+      // <font face="NSimSun, monospace"><span lang="zh-CN">初回（</span></font>players<font face="NSimSun, monospace"><span lang="zh-CN">が空）の場合はサンプル</span></font>10<font face="NSimSun, monospace"><span lang="zh-CN">人を自動登録</span></font>
+      if (!Array.isArray(players) || players.length === 0) {
+        players = createSamplePlayers();
+        savePlayers();
+      }
+    }
+
+    function savePlayers() {
+      localStorage.setItem(STORAGE_KEY_PLAYERS, JSON.stringify(players));
+    }
+    function saveLineup() {
+      localStorage.setItem(STORAGE_KEY_LINEUP, JSON.stringify(lineup));
+    }
+
+    function createPositionSelect(defaultValue) {
+      const sel = document.createElement(&quot;select&quot;);
+      POSITIONS.forEach(p =&gt; {
+        const opt = document.createElement(&quot;option&quot;);
+        opt.value = p.value;
+        opt.textContent = p.label;
+        sel.appendChild(opt);
+      });
+      sel.value = defaultValue || &quot;&quot;;
+      return sel;
+    }
+
+    function positionLabel(value) {
+      const p = POSITIONS.find(p =&gt; p.value === value);
+      return p ? p.label : value || &quot;&quot;;
+    }
+
+    function matchesPosition(player, posValue) {
+      if (!posValue) return true; // <font face="NSimSun, monospace"><span lang="zh-CN">絞り込みなし</span></font>
+      if (!player) return false;
+      const poss = player.possible || [];
+      const des  = player.desired || [];
+      return poss.includes(posValue) || des.includes(posValue);
+    }
+
+    // ---- DOM ----
+    const playerNameInput       = document.getElementById(&quot;playerName&quot;);
+    const playerNumberInput     = document.getElementById(&quot;playerNumber&quot;);
+    const possiblePositionsDiv  = document.getElementById(&quot;possiblePositionsInputs&quot;);
+    const desiredPositionsDiv   = document.getElementById(&quot;desiredPositionsInputs&quot;);
+    const addPlayerBtn          = document.getElementById(&quot;addPlayerBtn&quot;);
+    const clearPlayersBtn       = document.getElementById(&quot;clearPlayersBtn&quot;);
+    const playerListDiv         = document.getElementById(&quot;playerList&quot;);
+
+    const searchPositionSelect  = document.getElementById(&quot;searchPositionSelect&quot;);
+    const searchBtn             = document.getElementById(&quot;searchBtn&quot;);
+    const resetSearchBtn        = document.getElementById(&quot;resetSearchBtn&quot;);
+    const searchResultList      = document.getElementById(&quot;searchResultList&quot;);
+
+    const dhModeSelect          = document.getElementById(&quot;dhModeSelect&quot;);
+    const lineupTableBody       = document.getElementById(&quot;lineupTableBody&quot;);
+    const previewTableBody      = document.getElementById(&quot;previewTableBody&quot;);
+    const checkBtn              = document.getElementById(&quot;checkBtn&quot;);
+    const clearLineupBtn        = document.getElementById(&quot;clearLineupBtn&quot;);
+    const clearLineupPlayersBtn = document.getElementById(&quot;clearLineupPlayersBtn&quot;);
+    const validationMessagesDiv = document.getElementById(&quot;validationMessages&quot;);
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">初期入力（第</span></font>1<font face="NSimSun, monospace"><span lang="zh-CN">〜第</span></font>4<font face="NSimSun, monospace"><span lang="zh-CN">候補</span></font>/<font face="NSimSun, monospace"><span lang="zh-CN">希望）を描画 </span></font>----
+    function renderPositionInputRows() {
+      possiblePositionsDiv.innerHTML = &quot;&quot;;
+      desiredPositionsDiv.innerHTML = &quot;&quot;;
+      for (let i = 0; i &lt; 4; i++) {
+        const wrap1 = document.createElement(&quot;div&quot;);
+        const label1 = document.createElement(&quot;span&quot;);
+        label1.className = &quot;small&quot;;
+        label1.textContent = `<font face="NSimSun, monospace"><span lang="zh-CN">第</span></font>${i+1}<font face="NSimSun, monospace"><span lang="zh-CN">候補</span></font>`;
+        const sel1 = createPositionSelect(&quot;&quot;);
+        sel1.id = `possiblePos${i}`;
+        wrap1.appendChild(label1);
+        wrap1.appendChild(sel1);
+        possiblePositionsDiv.appendChild(wrap1);
+
+        const wrap2 = document.createElement(&quot;div&quot;);
+        const label2 = document.createElement(&quot;span&quot;);
+        label2.className = &quot;small&quot;;
+        label2.textContent = `<font face="NSimSun, monospace"><span lang="zh-CN">第</span></font>${i+1}<font face="NSimSun, monospace"><span lang="zh-CN">希望</span></font>`;
+        const sel2 = createPositionSelect(&quot;&quot;);
+        sel2.id = `desiredPos${i}`;
+        wrap2.appendChild(label2);
+        wrap2.appendChild(sel2);
+        desiredPositionsDiv.appendChild(wrap2);
+      }
+    }
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">選手リスト描画 </span></font>----
+    function renderPlayers() {
+      playerListDiv.innerHTML = &quot;&quot;;
+      if (players.length === 0) {
+        const p = document.createElement(&quot;p&quot;);
+        p.className = &quot;small&quot;;
+        p.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">登録されている選手はいません。</span></font>&quot;;
+        playerListDiv.appendChild(p);
+        return;
+      }
+
+      players.forEach(player =&gt; {
+        const card = document.createElement(&quot;div&quot;);
+        card.className = &quot;player-card&quot;;
+
+        const header = document.createElement(&quot;div&quot;);
+        header.className = &quot;player-card-header&quot;;
+        const nameSpan = document.createElement(&quot;div&quot;);
+        nameSpan.textContent = `${player.number || &quot;&quot;} ${player.name}`;
+
+        const delBtn = document.createElement(&quot;button&quot;);
+        delBtn.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">削除</span></font>&quot;;
+        delBtn.className = &quot;danger&quot;;
+        delBtn.style.fontSize = &quot;11px&quot;;
+        delBtn.onclick = () =&gt; {
+          if (confirm(`${player.name} <font face="NSimSun, monospace"><span lang="zh-CN">を削除しますか？</span></font>\n<font face="NSimSun, monospace"><span lang="zh-CN">オーダーからも外れます。</span></font>`)) {
+            lineup = lineup.map(slot =&gt;
+              slot.playerId === player.id ? { ...slot, playerId: &quot;&quot; } : slot
+            );
+            players = players.filter(p =&gt; p.id !== player.id);
+            savePlayers();
+            saveLineup();
+            renderPlayers();
+            renderLineupTable();
+            renderPreviewTable();
+            renderSearchResults(); // <font face="NSimSun, monospace"><span lang="zh-CN">検索結果更新</span></font>
+          }
+        };
+
+        header.appendChild(nameSpan);
+        header.appendChild(delBtn);
+        card.appendChild(header);
+
+        const possRow = document.createElement(&quot;div&quot;);
+        possRow.className = &quot;small&quot;;
+        possRow.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">可能：</span></font>&quot;;
+        (player.possible || []).forEach((pos, idx) =&gt; {
+          if (!pos) return;
+          const pill = document.createElement(&quot;span&quot;);
+          pill.className = &quot;pill&quot;;
+          pill.textContent = `<font face="NSimSun, monospace"><span lang="zh-CN">第</span></font>${idx+1}:${positionLabel(pos)}`;
+          possRow.appendChild(pill);
+        });
+        card.appendChild(possRow);
+
+        const desRow = document.createElement(&quot;div&quot;);
+        desRow.className = &quot;small&quot;;
+        desRow.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">希望：</span></font>&quot;;
+        (player.desired || []).forEach((pos, idx) =&gt; {
+          if (!pos) return;
+          const pill = document.createElement(&quot;span&quot;);
+          pill.className = &quot;pill&quot;;
+          pill.textContent = `<font face="NSimSun, monospace"><span lang="zh-CN">第</span></font>${idx+1}:${positionLabel(pos)}`;
+          desRow.appendChild(pill);
+        });
+        card.appendChild(desRow);
+
+        playerListDiv.appendChild(card);
+      });
+    }
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">検索結果描画 </span></font>----
+    function renderSearchResults() {
+      const posValue = searchPositionSelect.value;
+      searchResultList.innerHTML = &quot;&quot;;
+
+      const matched = players.filter(p =&gt; matchesPosition(p, posValue));
+      if (matched.length === 0) {
+        const p = document.createElement(&quot;p&quot;);
+        p.className = &quot;small&quot;;
+        p.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">条件に合う選手がいません。</span></font>&quot;;
+        searchResultList.appendChild(p);
+        return;
+      }
+
+      matched.forEach(player =&gt; {
+        const card = document.createElement(&quot;div&quot;);
+        card.className = &quot;player-card&quot;;
+
+        const header = document.createElement(&quot;div&quot;);
+        header.className = &quot;player-card-header&quot;;
+        const left = document.createElement(&quot;div&quot;);
+        left.textContent = `${player.number || &quot;&quot;} ${player.name}`;
+        const right = document.createElement(&quot;div&quot;);
+        const btn = document.createElement(&quot;button&quot;);
+        btn.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">この選手をセット</span></font>&quot;;
+        btn.style.fontSize = &quot;11px&quot;;
+        btn.onclick = () =&gt; {
+          if (selectedLineupIndex == null) {
+            alert(&quot;<font face="NSimSun, monospace"><span lang="zh-CN">先に右側の表で、編集したい打順の「選択」ボタンを押してください。</span></font>&quot;);
+            return;
+          }
+          const slot = lineup[selectedLineupIndex];
+          slot.playerId = player.id;
+          // <font face="NSimSun, monospace"><span lang="zh-CN">守備位置が空なら、検索中ポジションを自動で入れる</span></font>
+          if (!slot.pos &amp;&amp; posValue) {
+            slot.pos = posValue;
+          }
+          saveLineup();
+          renderLineupTable();
+          renderPreviewTable();
+        };
+        right.appendChild(btn);
+
+        header.appendChild(left);
+        header.appendChild(right);
+        card.appendChild(header);
+
+        const posRow = document.createElement(&quot;div&quot;);
+        posRow.className = &quot;small&quot;;
+        posRow.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">可能：</span></font>&quot;;
+        (player.possible || []).forEach((pos, idx) =&gt; {
+          if (!pos) return;
+          const pill = document.createElement(&quot;span&quot;);
+          pill.className = &quot;pill&quot;;
+          pill.textContent = `<font face="NSimSun, monospace"><span lang="zh-CN">第</span></font>${idx+1}:${positionLabel(pos)}`;
+          posRow.appendChild(pill);
+        });
+        card.appendChild(posRow);
+
+        const desRow = document.createElement(&quot;div&quot;);
+        desRow.className = &quot;small&quot;;
+        desRow.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">希望：</span></font>&quot;;
+        (player.desired || []).forEach((pos, idx) =&gt; {
+          if (!pos) return;
+          const pill = document.createElement(&quot;span&quot;);
+          pill.className = &quot;pill&quot;;
+          pill.textContent = `<font face="NSimSun, monospace"><span lang="zh-CN">第</span></font>${idx+1}:${positionLabel(pos)}`;
+          desRow.appendChild(pill);
+        });
+        card.appendChild(desRow);
+
+        searchResultList.appendChild(card);
+      });
+    }
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">オーダー編集テーブル描画 </span></font>----
+    function renderLineupTable() {
+      lineupTableBody.innerHTML = &quot;&quot;;
+      for (let i = 0; i &lt; 9; i++) {
+        const tr = document.createElement(&quot;tr&quot;);
+        if (i === selectedLineupIndex) {
+          tr.className = &quot;lineup-row-selected&quot;;
+        }
+
+        const slot = lineup[i] || { playerId: &quot;&quot;, pos: &quot;&quot; };
+        const player = players.find(p =&gt; p.id === slot.playerId);
+
+        // <font face="NSimSun, monospace"><span lang="zh-CN">打順</span></font>
+        const tdOrder = document.createElement(&quot;td&quot;);
+        tdOrder.textContent = i + 1;
+        tr.appendChild(tdOrder);
+
+        // <font face="NSimSun, monospace"><span lang="zh-CN">守備位置 </span></font>select
+        const tdPos = document.createElement(&quot;td&quot;);
+        const posSelect = createPositionSelect(slot.pos || &quot;&quot;);
+        posSelect.onchange = () =&gt; {
+          lineup[i].pos = posSelect.value;
+          saveLineup();
+          renderPreviewTable();
+        };
+        tdPos.appendChild(posSelect);
+        tr.appendChild(tdPos);
+
+        // <font face="NSimSun, monospace"><span lang="zh-CN">選手名</span></font>
+        const tdPlayer = document.createElement(&quot;td&quot;);
+        tdPlayer.textContent = player ? `${player.number || &quot;&quot;} ${player.name}` : &quot;&quot;;
+        tr.appendChild(tdPlayer);
+
+        // <font face="NSimSun, monospace"><span lang="zh-CN">操作</span></font>
+        const tdAction = document.createElement(&quot;td&quot;);
+        const selectBtn = document.createElement(&quot;button&quot;);
+        selectBtn.textContent = &quot;<font face="NSimSun, monospace"><span lang="zh-CN">選択</span></font>&quot;;
+        selectBtn.style.fontSize = &quot;11px&quot;;
+        selectBtn.onclick = () =&gt; {
+          selectedLineupIndex = i;
+          renderLineupTable();
+        };
+        tdAction.appendChild(selectBtn);
+
+        const clearBtn = document.createElement(&quot;button&quot;);
+        clearBtn.textContent = &quot;×&quot;;
+        clearBtn.className = &quot;secondary&quot;;
+        clearBtn.style.fontSize = &quot;11px&quot;;
+        clearBtn.style.marginLeft = &quot;2px&quot;;
+        clearBtn.onclick = () =&gt; {
+          lineup[i] = { playerId: &quot;&quot;, pos: &quot;&quot; };
+          saveLineup();
+          renderLineupTable();
+          renderPreviewTable();
+        };
+        tdAction.appendChild(clearBtn);
+
+        tr.appendChild(tdAction);
+
+        lineupTableBody.appendChild(tr);
+      }
+    }
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">オーダー表描画 </span></font>----
+    function renderPreviewTable() {
+      previewTableBody.innerHTML = &quot;&quot;;
+      for (let i = 0; i &lt; 9; i++) {
+        const tr = document.createElement(&quot;tr&quot;);
+        const slot = lineup[i] || { playerId: &quot;&quot;, pos: &quot;&quot; };
+        const player = players.find(p =&gt; p.id === slot.playerId);
+
+        const tdOrder = document.createElement(&quot;td&quot;);
+        tdOrder.textContent = i + 1;
+        tr.appendChild(tdOrder);
+
+        const tdNum = document.createElement(&quot;td&quot;);
+        tdNum.textContent = player?.number || &quot;&quot;;
+        tr.appendChild(tdNum);
+
+        const tdName = document.createElement(&quot;td&quot;);
+        tdName.textContent = player?.name || &quot;&quot;;
+        tr.appendChild(tdName);
+
+        const tdPos = document.createElement(&quot;td&quot;);
+        tdPos.textContent = positionLabel(slot.pos);
+        tr.appendChild(tdPos);
+
+        previewTableBody.appendChild(tr);
+      }
+    }
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">オーダーチェック </span></font>----
+    function checkLineup() {
+      const messages = [];
+
+      const dhMode = dhModeSelect.value;
+      const requiredPos = dhMode === &quot;with&quot;
+        ? [...REQUIRED_FIELD_POS_BASE, &quot;DH&quot;]
+        : [...REQUIRED_FIELD_POS_BASE];
+
+      const missingPos = [];
+
+      // <font face="NSimSun, monospace"><span lang="zh-CN">各必要ポジションが入っているか</span></font>
+      requiredPos.forEach(pos =&gt; {
+        const exists = lineup.some(slot =&gt; slot.pos === pos);
+        if (!exists) missingPos.push(pos);
+      });
+
+      if (missingPos.length &gt; 0) {
+        const labels = missingPos.map(positionLabel).join(&quot; / &quot;);
+        messages.push({ type: &quot;warn&quot;, text: `<font face="NSimSun, monospace"><span lang="zh-CN">不足ポジション：</span></font>${labels}` });
+      }
+
+      // <font face="NSimSun, monospace"><span lang="zh-CN">同一選手の重複チェック</span></font>
+      const ids = lineup.map(s =&gt; s.playerId).filter(id =&gt; id);
+      const dupIds = Array.from(new Set(ids.filter((id, idx) =&gt; ids.indexOf(id) !== idx)));
+      if (dupIds.length &gt; 0) {
+        const names = dupIds.map(id =&gt; {
+          const p = players.find(pl =&gt; pl.id === id);
+          return p ? `${p.number || &quot;&quot;} ${p.name}` : id;
+        });
+        messages.push({ type: &quot;warn&quot;, text: `<font face="NSimSun, monospace"><span lang="zh-CN">同じ選手が複数箇所に入っています：</span></font>${names.join(&quot; / &quot;)}` });
+      }
+
+      // <font face="NSimSun, monospace"><span lang="zh-CN">未入力打順チェック（任意）</span></font>
+      const emptySlots = lineup
+        .map((s, idx) =&gt; ({ s, idx }))
+        .filter(v =&gt; !v.s.playerId)
+        .map(v =&gt; v.idx + 1);
+      if (emptySlots.length &gt; 0) {
+        messages.push({ type: &quot;warn&quot;, text: `<font face="NSimSun, monospace"><span lang="zh-CN">選手未設定の打順：</span></font>${emptySlots.join(&quot;, &quot;)}<font face="NSimSun, monospace"><span lang="zh-CN">番</span></font>` });
+      }
+
+      if (messages.length === 0) {
+        messages.push({ type: &quot;ok&quot;, text: &quot;<font face="NSimSun, monospace"><span lang="zh-CN">オーダーに問題は見つかりませんでした。✨</span></font>&quot; });
+      }
+
+      // <font face="NSimSun, monospace"><span lang="zh-CN">表示</span></font>
+      validationMessagesDiv.innerHTML = &quot;&quot;;
+      messages.forEach(m =&gt; {
+        const p = document.createElement(&quot;p&quot;);
+        p.textContent = m.text;
+        p.className = m.type === &quot;ok&quot; ? &quot;msg-ok&quot; : &quot;msg-warn&quot;;
+        validationMessagesDiv.appendChild(p);
+      });
+
+      // <font face="NSimSun, monospace"><span lang="zh-CN">ざっくりアラートも出す</span></font>
+      const hasWarn = messages.some(m =&gt; m.type === &quot;warn&quot;);
+      if (hasWarn) {
+        alert(&quot;<font face="NSimSun, monospace"><span lang="zh-CN">オーダーに注意点があります。画面下部のメッセージを確認してください。</span></font>&quot;);
+      } else {
+        alert(&quot;<font face="NSimSun, monospace"><span lang="zh-CN">オーダー</span></font>OK<font face="NSimSun, monospace"><span lang="zh-CN">！✨</span></font>&quot;);
+      }
+    }
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">イベント設定 </span></font>----
+    addPlayerBtn.onclick = () =&gt; {
+      const name = playerNameInput.value.trim();
+      const number = playerNumberInput.value.trim();
+      if (!name) {
+        alert(&quot;<font face="NSimSun, monospace"><span lang="zh-CN">選手名を入力してください。</span></font>&quot;);
+        return;
+      }
+
+      const possible = [];
+      const desired  = [];
+      for (let i = 0; i &lt; 4; i++) {
+        const pSel = document.getElementById(`possiblePos${i}`);
+        const dSel = document.getElementById(`desiredPos${i}`);
+        possible.push(pSel.value || &quot;&quot;);
+        desired.push(dSel.value || &quot;&quot;);
+      }
+
+      const newPlayer = {
+        id: generateId(),
+        name,
+        number,
+        possible,
+        desired
+      };
+      players.push(newPlayer);
+      savePlayers();
+
+      // <font face="NSimSun, monospace"><span lang="zh-CN">入力クリア</span></font>
+      playerNameInput.value = &quot;&quot;;
+      playerNumberInput.value = &quot;&quot;;
+      renderPositionInputRows();
+
+      renderPlayers();
+      renderSearchResults();
+    };
+
+    clearPlayersBtn.onclick = () =&gt; {
+      if (!confirm(&quot;<font face="NSimSun, monospace"><span lang="zh-CN">選手データをすべて削除しますか？</span></font>\n<font face="NSimSun, monospace"><span lang="zh-CN">オーダーも空になります。</span></font>&quot;)) return;
+      players = [];
+      lineup = Array.from({ length: 9 }, () =&gt; ({ playerId: &quot;&quot;, pos: &quot;&quot; }));
+      savePlayers();
+      saveLineup();
+      renderPlayers();
+      renderLineupTable();
+      renderPreviewTable();
+      renderSearchResults();
+    };
+
+    searchBtn.onclick = () =&gt; {
+      renderSearchResults();
+    };
+
+    resetSearchBtn.onclick = () =&gt; {
+      searchPositionSelect.value = &quot;&quot;;
+      renderSearchResults();
+    };
+
+    checkBtn.onclick = () =&gt; {
+      checkLineup();
+    };
+
+    // <font face="NSimSun, monospace"><span lang="zh-CN">「選手だけ全リセット」＝守備位置はそのまま残して、</span></font>playerId<font face="NSimSun, monospace"><span lang="zh-CN">だけ空にする</span></font>
+    clearLineupPlayersBtn.onclick = () =&gt; {
+      if (!confirm(&quot;<font face="NSimSun, monospace"><span lang="zh-CN">打順にセットしている選手をすべて外しますか？</span></font>\n<font face="NSimSun, monospace"><span lang="zh-CN">守備位置の欄はそのまま残ります。</span></font>&quot;)) return;
+      lineup = lineup.map(slot =&gt; ({ ...slot, playerId: &quot;&quot; }));
+      saveLineup();
+      renderLineupTable();
+      renderPreviewTable();
+      validationMessagesDiv.innerHTML = &quot;&quot;;
+    };
+
+    // <font face="NSimSun, monospace"><span lang="zh-CN">「オーダー完全リセット」＝選手も守備位置もリセット</span></font>
+    clearLineupBtn.onclick = () =&gt; {
+      if (!confirm(&quot;<font face="NSimSun, monospace"><span lang="zh-CN">オーダー（選手と守備位置）を完全にリセットしますか？</span></font>&quot;)) return;
+      lineup = Array.from({ length: 9 }, () =&gt; ({ playerId: &quot;&quot;, pos: &quot;&quot; }));
+      saveLineup();
+      renderLineupTable();
+      renderPreviewTable();
+      validationMessagesDiv.innerHTML = &quot;&quot;;
+    };
+
+    // ---- <font face="NSimSun, monospace"><span lang="zh-CN">初期化 </span></font>----
+    function init() {
+      // <font face="NSimSun, monospace"><span lang="zh-CN">検索用ポジションセレクト</span></font>
+      POSITIONS.forEach(p =&gt; {
+        const opt = document.createElement(&quot;option&quot;);
+        opt.value = p.value;
+        opt.textContent = p.label || &quot;<font face="NSimSun, monospace"><span lang="zh-CN">全て</span></font>&quot;;
+        searchPositionSelect.appendChild(opt);
+      });
+
+      loadState();
+      renderPositionInputRows();
+      renderPlayers();
+      renderLineupTable();
+      renderPreviewTable();
+      renderSearchResults();
+    }
+
+    init();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+</body>
+</html>
